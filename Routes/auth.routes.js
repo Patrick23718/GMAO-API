@@ -14,7 +14,7 @@ router.post(
   controller.signupchauffeur
 );
 router.post("/signin", controller.signin);
-router.put("/resetpassword", controller.changePassword);
+router.put("/resetpassword", [mid.verifyToken], controller.changePassword);
 router.get("/profile", [mid.verifyToken], controller.getPersonne);
 router.put("/profile/update", [mid.verifyToken], controller.updatePersonne);
 // router.put("/update/:id", controller.updateEntreprise);

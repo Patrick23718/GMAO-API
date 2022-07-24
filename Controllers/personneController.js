@@ -5,7 +5,7 @@ const _personne = require("../Services/personne.service");
 
 exports.changePassword = async (req, res) => {
   try {
-    var id = req.body.personne;
+    var id = req.userId;
     const user = User.findById(id);
 
     var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
