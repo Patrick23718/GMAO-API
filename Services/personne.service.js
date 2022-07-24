@@ -70,4 +70,6 @@ exports.updatePersonne = async (id, entreprise, person) => {
   );
 
   return persons;
+  {
+  }
 };
