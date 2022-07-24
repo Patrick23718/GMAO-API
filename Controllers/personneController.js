@@ -156,9 +156,8 @@ exports.getPersonneUpToDate = async (req, res) => {
 
 exports.getPersonne = async (req, res) => {
   try {
-    const result = await _personne.getPersonne(req.params.id);
-    if (result.length == 0)
-      return res.status(404).send({ message: process.env.NOTFOUND });
+    const result = await _personne.getPersonne(req.userId);
+    if (!result) return res.status(404).send({ message: process.env.NOTFOUND });
     return res.status(200).send(result);
   } catch (error) {
     console.log(error);
@@ -169,8 +168,8 @@ exports.getPersonne = async (req, res) => {
 exports.updatePersonne = async (req, res) => {
   try {
     const result = await _personne.updatePersonne(
-      req.params.id,
-      req.params.Eid,
+      req.userId,
+      req.entreprise,
       req.body
     );
     if (result.modifiedCount == 0) return res.status(404).send(result);

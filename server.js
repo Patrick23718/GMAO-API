@@ -63,7 +63,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Bienvenue sur l'API." });
 });
 
-const mid = require("./Helpers/authJWT");
+const mid = require("./Middlewares/authJWT");
 
 const voiture = require("./Routes/voiture.routes");
 const marque = require("./Routes/marque.routes");
