@@ -3,6 +3,10 @@ const jwt = require("jsonwebtoken");
 const User = require("../Schemas/PersonSchema");
 
 verifyToken = (req, res, next) => {
+  req.userId = undefined;
+  req.role = undefined;
+  req.entreprise = undefined;
+
   let token = req.headers["x-access-token"];
 
   if (!token) {
@@ -14,9 +18,10 @@ verifyToken = (req, res, next) => {
       if (err) {
         return res.status(401).send({ message: "Vous devez vous connecter!" });
       }
-      console.log(decoded);
-      //req.userId = decoded.id;
-      //req.role = decoded.role;
+      req.userId = decoded.id;
+      req.role = decoded.role;
+      req.entreprise = decoded.entreprise;
+      console.log({ id: req.userId, role: req.role, entre: req.entreprise });
       next();
     });
   } catch (error) {
@@ -25,71 +30,34 @@ verifyToken = (req, res, next) => {
 };
 
 isAdmin = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
-
-    if (user === null || user === {}) {
-      return res.status(404).json({ message: "L'utilisateur n'existe pas" });
-    }
-
-    if (user.role === "admin") {
-      next();
-      return;
-    }
-
-    res.status(403).send({ message: "Require Admin Role!" });
-    return;
-  });
+  req.role === "admin"
+    ? next()
+    : res.status(403).send({ message: "Require admin Role!" });
 };
 
 isRoot = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
-    if (user === null || user === {}) {
-      return res.status(404).json({ message: "L'utilisateur n'existe pas" });
-    }
-
-    if (user.role === "root") {
-      next();
-      return;
-    }
-
-    res.status(403).send({ message: "Require Coiffeuse Role!" });
-    return;
-  });
+  req.role === "root"
+    ? next()
+    : res.status(403).send({ message: "Require admin Role!" });
 };
 
-isCliente = (req, res, next) => {
-  User.findById(req.userId).exec((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
+isPDG = () => {
+  req.role === "pdg"
+    ? next()
+    : res.status(403).send({ message: "Require pdg Role!" });
+};
 
-    if (user === null || user === {}) {
-      return res.status(404).json({ message: "L'utilisateur n'existe pas" });
-    }
-
-    if (user.role === "cliente") {
-      next();
-      return;
-    }
-
-    res.status(403).send({ message: "Require Cliente Role!" });
-    return;
-  });
+isUser = (req, res, next) => {
+  req.role === "user"
+    ? next()
+    : res.status(403).send({ message: "Require user Role!" });
 };
 
 const authJwt = {
   verifyToken,
   isAdmin,
-  isCoiffeuse,
-  isCliente,
+  isRoot,
+  isPDG,
+  isUser,
 };
 module.exports = authJwt;

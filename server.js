@@ -63,18 +63,21 @@ app.get("/", (req, res) => {
   res.json({ message: "Bienvenue sur l'API." });
 });
 
+const mid = require("./Helpers/authJWT");
+
 const voiture = require("./Routes/voiture.routes");
 const marque = require("./Routes/marque.routes");
 const model = require("./Routes/model.routes");
 const entreprise = require("./Routes/entreprise.routes");
 const auth = require("./Routes/auth.routes");
+const person = require("./Routes/person.routes");
 
-app.use(`/api/${process.env.V}/voiture`, voiture);
-app.use(`/api/${process.env.V}/marque`, marque);
-app.use(`/api/${process.env.V}/model`, model);
+app.use(`/api/${process.env.V}/voiture`, [mid.verifyToken], voiture);
+app.use(`/api/${process.env.V}/marque`, [mid.verifyToken], marque);
+app.use(`/api/${process.env.V}/model`, [mid.verifyToken], model);
 app.use(`/api/${process.env.V}/entreprise`, entreprise);
 app.use(`/api/${process.env.V}/auth`, auth);
-
+app.use(`/api/${process.env.V}/person`, [mid.verifyToken], auth);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server Started at ${PORT}`);
